@@ -1,3 +1,6 @@
+[![NuGet](https://img.shields.io/nuget/v/GameTimers.svg?maxAge=2592000)](https://www.nuget.org/packages/GameTimers/)
+ [![license](https://img.shields.io/github/license/unterrainerinformatik/collisiongrid.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)  
+
 # GameTimers
 
 When programming a game you'll depend on timers heavily. Whether you have a damage effect, that needs to be calculated every x seconds, or a visual special effect to be controlled, you'll steer all that by adding time to variable and checking it against a limit.
