@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>GameTimers</id>
+    <version>$version$</version>
+    <title>GameTimers</title>
+    <authors>Unterrainer Informatik OG Team</authors>
+    <owners>Public Domain</owners>
+    <licenseUrl>http://unlicense.org</licenseUrl>
+    <projectUrl>https://github.com/UnterrainerInformatik/GameTimers</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Some Game-Timers for your convenience.</description>
+    <summary>
+      Here are some Game-Timers to reduce boilerplate code in your games...
+    </summary>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <language>en-US</language>
+    <tags>Timer GameTime GameTimers Timers Fader</tags>
+  </metadata>
+</package>

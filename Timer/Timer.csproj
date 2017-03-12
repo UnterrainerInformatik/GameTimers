@@ -55,6 +55,7 @@
     <Compile Include="Fader.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimerArgs.cs" />
     <Compile Include="ValueChangedArgs.cs" />
   </ItemGroup>
   <ItemGroup>
