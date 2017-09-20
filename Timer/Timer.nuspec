@@ -7,6 +7,7 @@
     <authors>Unterrainer Informatik OG Team</authors>
     <owners>Public Domain</owners>
     <licenseUrl>http://unlicense.org</licenseUrl>
+	<iconUrl>https://github.com/UnterrainerInformatik/GameTimers/raw/master/icon.png</iconUrl>
     <projectUrl>https://github.com/UnterrainerInformatik/GameTimers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Some Game-Timers for your convenience.</description>
