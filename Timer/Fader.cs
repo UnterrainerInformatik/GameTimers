@@ -36,7 +36,6 @@ namespace Timer
     ///     Be careful when serializing since the order of value-assignments when deserializing is very important:
     ///     SetValue -> 300 BEFORE MaxValue -> 400 will clamp the value to 100 (the default-value of MaxValue).
     /// </summary>
-    [Serializable]
     [PublicAPI]
     public class Fader
     {

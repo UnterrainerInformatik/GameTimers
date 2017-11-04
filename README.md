@@ -7,6 +7,8 @@ When programming a game you'll depend on timers heavily. Whether you have a dama
 Like with every work that gets repetitive, you'll get sloppy and you'll make mistakes.
 And it's precisely for this reason that I wrote these classes.
 
+This is a PCL (portable code library) so you should be able to use it in any of your MG projects.
+
 ## Description
 
 It should have a constructor where you would have to declare the timeout in milliseconds you want to measure.
