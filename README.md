@@ -9,6 +9,11 @@ And it's precisely for this reason that I wrote these classes.
 
 This is a PCL (portable code library) so you should be able to use it in any of your MG projects.
 
+> **If you like this repo, please don't forget to star it.**
+> **Thank you.**
+
+
+
 ## Description
 
 It should have a constructor where you would have to declare the timeout in milliseconds you want to measure.
