@@ -10,7 +10,8 @@
 	<iconUrl>https://github.com/UnterrainerInformatik/GameTimers/raw/master/icon.png</iconUrl>
     <projectUrl>https://github.com/UnterrainerInformatik/GameTimers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Some Game-Timers for your convenience.</description>
+    <description>When programming a game you'll depend on timers heavily. Whether you have a damage effect, that needs to be calculated every x seconds, or a visual special effect to be controlled, you'll steer all that by adding time to variable and checking it against a limit. Like with every work that gets repetitive, you'll get sloppy and you'll make mistakes. And it's precisely for this reason that I wrote these classes.
+				This is a PCL (portable code library) so you should be able to use it in any of your MG projects.</description>
     <summary>
       Here are some Game-Timers to reduce boilerplate code in your games...
     </summary>
