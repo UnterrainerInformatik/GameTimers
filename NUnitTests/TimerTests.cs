@@ -26,7 +26,6 @@
 // ***************************************************************************
 
 using NUnit.Framework;
-using Timer;
 
 namespace NUnitTests
 {
@@ -34,21 +33,50 @@ namespace NUnitTests
     [Category("Fader")]
     public class TimerTests
     {
-        private Timer.Timer t = new Timer.Timer(2f);
+        private readonly Timer.Timer t = Timer.Timer.Builder(10).Build();
 
         [Test]
-        public void Test()
+        public void TriggeredTimerInvokesEventsCorrectlyAndInOrder()
         {
-            var updatingTriggered = false;
-            var updatedTriggered = false;
-            t.TimerUpdating += (sender, args) => updatingTriggered = true;
-            t.TimerUpdated += (sender, args) => updatedTriggered = true;
+            var index = 1;
+            var updatingTriggered = -1;
+            var updatedTriggered = -1;
+            var firingTriggered = -1;
+            var firedTriggered = -1;
+            
+            t.TimerUpdating += (sender, args) =>
+            {
+                updatingTriggered = index;
+                index++;
+            };
+            t.TimerUpdated += (sender, args) =>
+            {
+                updatedTriggered = index;
+                index++;
+            };
+            t.TimerFiring += (sender, args) =>
+            {
+                updatedTriggered = index;
+                index++;
+            };
+            t.TimerFired += (sender, args) =>
+            {
+                firedTriggered = index;
+                index++;
+            };
+            t.TimerFiring += (sender, args) =>
+            {
+                firingTriggered = index;
+                index++;
+            };
 
             var isTriggered = t.Update(1000f);
 
             Assert.IsTrue(isTriggered);
-            Assert.IsTrue(updatingTriggered);
-            Assert.IsTrue(updatedTriggered);
+            Assert.AreEqual(updatingTriggered, 1);
+            Assert.AreEqual(firingTriggered, 2);
+            Assert.AreEqual(firedTriggered, 3);
+            Assert.AreEqual(updatedTriggered, 4);
         }
 
 

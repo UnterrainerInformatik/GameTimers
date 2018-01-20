@@ -65,17 +65,17 @@ namespace Timer
         /// <summary>
         ///     Initializes a new instance of the <see cref="Timer" /> class.
         /// </summary>
-        /// <param name="intervalInMilliseconds">The interval in milliseconds.</param>
-        public Timer(float intervalInMilliseconds)
-            : base(0.0f, intervalInMilliseconds, 0.0f)
+        /// <param name="intervalInMillis">The interval in milliseconds.</param>
+        public Timer(float intervalInMillis)
+            : base(0.0f, intervalInMillis, 0.0f)
         {
             IsActive = true;
             Next = this;
         }
 
-        public static Timer Builder(float value)
+        public static TimerBuilder Builder(float value)
         {
-            return new Timer(value);
+            return new TimerBuilder(value);
         }
 
         /// <summary>
@@ -102,12 +102,12 @@ namespace Timer
         }
 
         /// <summary>
-        ///     Gets or sets the timer in milliseconds.
+        ///     Gets or sets the timer's value (not the upper bound) in milliseconds.
         /// </summary>
         /// <value>
         ///     The time in milliseconds.
         /// </value>
-        public float ValueInMilliseconds
+        public float ValueInMillis
         {
             get => (float) (Value - MinValue);
             set => Value = MinValue + value;
@@ -115,28 +115,15 @@ namespace Timer
 
         public Timer SetValueInMilliseconds(float value)
         {
-            ValueInMilliseconds = value;
+            ValueInMillis = value;
             return this;
         }
 
         /// <summary>
-        ///     Gets or sets the interval in milliseconds.
+        ///     Resets the value of this timer to zero and the upper bound to <see cref="intervalInMilliseconds" />.
         /// </summary>
-        /// <value>
-        ///     The interval of the timer in milliseconds.
-        /// </value>
-        public float IntervalInMilliseconds
-        {
-            get => (float) (MaxValue - MinValue);
-            set => MaxValue = MinValue + value;
-        }
-
-        public Timer SetIntervalInMilliseconds(float value)
-        {
-            IntervalInMilliseconds = value;
-            return this;
-        }
-
+        /// <param name="intervalInMilliseconds"></param>
+        /// <returns></returns>
         public Timer ResetTo(float intervalInMilliseconds)
         {
             MinValue = 0.0f;
@@ -238,7 +225,7 @@ namespace Timer
         }
 
         /// <summary>
-        ///     Sets the timer so that it fires when calling update the next time.
+        ///     Sets the timer so that it fires when calling update the next time (sets the value to maxValue).
         /// </summary>
         public Timer Set()
         {
@@ -363,34 +350,34 @@ namespace Timer
         /// </returns>
         public bool Update(float elapsedTimeInMilliseconds = 0f, bool isReassignOverlap = false)
         {
-            if (IsActive)
+            if (!IsActive)
+                return false;
+
+            InvokeTimerUpdating();
+            // The new value has to be saved separately because the Value cannot be higher than MaxValue, since it's a Fader.
+            var newValue = Value + elapsedTimeInMilliseconds;
+            Value = newValue;
+
+            if (newValue >= MaxValue)
             {
-                InvokeTimerUpdating();
-                // The new value has to be saved separately because the Value cannot be higher than MaxValue, since it's a Fader.
-                var newValue = Value + elapsedTimeInMilliseconds;
-                Value = newValue;
-
-                if (newValue >= MaxValue)
+                InvokeTimerFiring();
+                if (isReassignOverlap)
                 {
-                    InvokeTimerFiring();
-                    if (isReassignOverlap)
-                    {
-                        ValueInMilliseconds = (float) newValue % (float) MaxValue;
-                    }
-                    else
-                    {
-                        Value = MinValue;
-                    }
-
-                    IsActive = false;
-                    Next.IsActive = true;
-                    InvokeTimerFired();
-                    InvokeTimerUpdated();
-                    return true;
+                    ValueInMillis = (float) newValue % (float) MaxValue;
+                }
+                else
+                {
+                    Value = MinValue;
                 }
 
+                IsActive = false;
+                Next.IsActive = true;
+                InvokeTimerFired();
                 InvokeTimerUpdated();
+                return true;
             }
+
+            InvokeTimerUpdated();
 
             return false;
         }
