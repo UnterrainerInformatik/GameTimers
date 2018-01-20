@@ -25,11 +25,14 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using JetBrains.Annotations;
+
 namespace Timer
 {
+    [PublicAPI]
     public struct ValueChangedArgs<T>
     {
-        public T OldValue { get; set; }
+        public T OldValue { get; }
 
         public ValueChangedArgs(T oldValue)
         {

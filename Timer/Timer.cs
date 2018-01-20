@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using Faders;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 
@@ -108,8 +109,8 @@ namespace Timer
         /// </value>
         public float ValueInMilliseconds
         {
-            get { return (float) (Value - MinValue); }
-            set { Value = MinValue + value; }
+            get => (float) (Value - MinValue);
+            set => Value = MinValue + value;
         }
 
         public Timer SetValueInMilliseconds(float value)
@@ -126,8 +127,8 @@ namespace Timer
         /// </value>
         public float IntervalInMilliseconds
         {
-            get { return (float) (MaxValue - MinValue); }
-            set { MaxValue = MinValue + value; }
+            get => (float) (MaxValue - MinValue);
+            set => MaxValue = MinValue + value;
         }
 
         public Timer SetIntervalInMilliseconds(float value)
@@ -265,12 +266,13 @@ namespace Timer
             {
                 Next = this;
             }
+
             if (otherTimer.Next == null)
             {
                 otherTimer.Next = otherTimer;
             }
 
-            Timer last = otherTimer.Previous();
+            var last = otherTimer.Previous();
             last.Next = Next;
             Next = otherTimer;
             return last;
@@ -283,11 +285,12 @@ namespace Timer
         /// <returns>The timer that resides before this timer in the timer-chain or itself, if it links to itself.</returns>
         public Timer Previous()
         {
-            Timer timer = this;
+            var timer = this;
             while (timer.Next != this)
             {
                 timer = timer.Next;
             }
+
             return timer;
         }
 
@@ -299,12 +302,13 @@ namespace Timer
         /// <returns>This instance in order to support a fluent interface.</returns>
         public Timer Visit(Action<Timer> action)
         {
-            Timer timer = this;
+            var timer = this;
             while (timer.Next != this)
             {
                 timer = timer.Next;
                 action(timer);
             }
+
             return this;
         }
 
@@ -363,7 +367,7 @@ namespace Timer
             {
                 InvokeTimerUpdating();
                 // The new value has to be saved separately because the Value cannot be higher than MaxValue, since it's a Fader.
-                double newValue = Value + elapsedTimeInMilliseconds;
+                var newValue = Value + elapsedTimeInMilliseconds;
                 Value = newValue;
 
                 if (newValue >= MaxValue)
@@ -377,14 +381,17 @@ namespace Timer
                     {
                         Value = MinValue;
                     }
+
                     IsActive = false;
                     Next.IsActive = true;
                     InvokeTimerFired();
                     InvokeTimerUpdated();
                     return true;
                 }
+
                 InvokeTimerUpdated();
             }
+
             return false;
         }
     }

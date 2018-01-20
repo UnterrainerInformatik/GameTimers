@@ -25,18 +25,38 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
+using NUnit.Framework;
+using Timer;
 
-namespace Timer
+namespace NUnitTests
 {
-    [PublicAPI]
-    public struct TimerArgs
+    [TestFixture]
+    [Category("Fader")]
+    public class TimerTests
     {
-        public Timer Source { get; }
+        private Timer.Timer t = new Timer.Timer(2f);
 
-        public TimerArgs(Timer t)
+        [Test]
+        public void Test()
         {
-            Source = t;
+            var updatingTriggered = false;
+            var updatedTriggered = false;
+            t.TimerUpdating += (sender, args) => updatingTriggered = true;
+            t.TimerUpdated += (sender, args) => updatedTriggered = true;
+
+            var isTriggered = t.Update(1000f);
+
+            Assert.IsTrue(isTriggered);
+            Assert.IsTrue(updatingTriggered);
+            Assert.IsTrue(updatedTriggered);
         }
+
+
+        /*
+        [Test]
+        public void Test()
+        {
+        }
+         */
     }
 }
