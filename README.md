@@ -30,34 +30,39 @@ Here are some examples of its usage:
 This one declares a timer using the builder-pattern and sets it active.
 
 ```c#
-SpecialAbilityTimerSpawner = Timer.Builder(0f).isActive(true);
+SpecialAbilityTimerSpawner = Timer.Builder(0f).Build();
 ```
 
 This one is declaring two timers and connects them so that, when the first one fires, the second one gets started and the first one is set to in-active. Normally single timers are connected to themselves.
 
 ```c#
-AbilityTimerPodRacer = Timer.Builder(0f).isActive(false).Fired(EnablingAbilityPodRacer);
-AbilityDurationPodRacer = Timer.Builder(0f).isActive(false).Fired(DisablingAbilityPodRacer);
+AbilityTimerPodRacer = Timer.Builder(0f).InActive().Fired(EnablingAbilityPodRacer).Build();
+AbilityDurationPodRacer = Timer.Builder(0f).InActive().Fired(DisablingAbilityPodRacer).Build();
 AbilityTimerPodRacer.Connect(AbilityDurationPodRacer);
 ```
 
 And, a bit more complicated, this one is used for our spider. It waits until the first timer (AbilityTimerSpider) fires, then its starting to fade-out until the FadeOutTimer fires, then it stays invulnerable until the DurationSpider timer fires. That one starts to fade-in the spider again until the FadeIn timer fires. They all, of course, are connected.
 
 ```c#
-AbilityTimerSpider = Timer.Builder(0f).isActive(false).Fired(StartFadingOutSpider);
-AbilityFadeOutSpider =
-        Timer.Builder(0f)
-                .isActive(false)
+AbilityTimerSpider = Timer.Builder(0f).InActive().Fired(StartFadingOutSpider).Build();
+AbilityFadeOutSpider = Timer.Builder(0f)
+                .InActive()
                 .Fired(StartInvulnerabilitySpider)
-                .Updating(UpdatingAbilityFadeOutSpider);
-AbilityDurationSpider = Timer.Builder(0f).isActive(false).Fired(StartFadingInSpider);
-AbilityFadeInSpider =
-        Timer.Builder(0f)
-                .isActive(false)
+                .Updating(UpdatingAbilityFadeOutSpider)
+                .Build();
+AbilityDurationSpider = Timer.Builder(0f)
+                .InActive()
+                .Fired(StartFadingInSpider)
+                .Build();
+AbilityFadeInSpider = Timer.Builder(0f)
+                .InActive()
                 .Fired(EndAbilitySpider)
-                .Updating(UpdatingAbilityFadeInSpider);
-AbilityTimerSpider.Connect(AbilityFadeOutSpider).Connect(AbilityDurationSpider)._
-     Connect(AbilityFadeInSpider);
+                .Updating(UpdatingAbilityFadeInSpider)
+                .Build();
+
+AbilityTimerSpider.Connect(AbilityFadeOutSpider)
+                  .Connect(AbilityDurationSpider)
+                  .Connect(AbilityFadeInSpider);
 ```
 
 You may not only subscribe to the Fired-event, but you may ask the timer on update if it just fired, like that:
