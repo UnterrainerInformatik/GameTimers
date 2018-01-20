@@ -107,20 +107,17 @@ namespace Timer
         /// <value>
         ///     The time in milliseconds.
         /// </value>
-        public float ValueInMillis
-        {
-            get => (float) (Value - MinValue);
-            set => Value = MinValue + value;
-        }
+        public float ValueInMillis => (float)(Value - MinValue);
 
-        public Timer SetValueInMilliseconds(float value)
+        public Timer SetTo(float value)
         {
-            ValueInMillis = value;
+            Value = MinValue + value;
             return this;
         }
 
         /// <summary>
         ///     Resets the value of this timer to zero and the upper bound to <see cref="intervalInMilliseconds" />.
+        ///     <b>Does NOT activate it if it should have been disabled before.</b>
         /// </summary>
         /// <param name="intervalInMilliseconds"></param>
         /// <returns></returns>
@@ -215,12 +212,12 @@ namespace Timer
         public float TimeLeftToGoUntilReset => (float) (MaxValue - Value);
 
         /// <summary>
-        ///     Resets the timer by resetting the time-value. Does NOT activate it if it should have been disabled before.
+        ///     Resets the timer by resetting the time-value.
+        ///     <b>Does NOT activate it if it should have been disabled before.</b>
         /// </summary>
         public Timer Reset()
         {
             Value = MinValue;
-            IsActive = true;
             return this;
         }
 
@@ -335,18 +332,17 @@ namespace Timer
         }
 
         /// <summary>
-        ///     Updates the timer and returns <see langword="true" /> if it has
-        ///     fired.
+        ///     Updates the timer and returns <see langword="true" /> if it has fired.
         /// </summary>
         /// <param name="elapsedTimeInMilliseconds">The elapsed time in milliseconds.</param>
         /// <param name="isReassignOverlap">
-        ///     If set to <c>true</c> it reassigns the overlap (the rest of the passed time) to the timer (modulo timer-length of
-        ///     course),
-        ///     in order to loose no time.
+        ///     If set to <c>true</c> it reassigns the overlap (the rest of the passed time) to the timer in order to loose no
+        ///     time. It does a modulo timer-length of the elapsed time to simulate the timer having been triggered multiple times.
+        ///     The rest of the time will be on the timer afterwards. So if the time elapsed was, for example, 2.3*timer-length and
+        ///     the value was 0, then it will trigger and there will be .3 timer-length left.
         /// </param>
         /// <returns>
-        ///     <see langword="true" />, if it has fired; Otherwise
-        ///     <see langword="false" />.
+        ///     <c>true</c>, if it has fired; Otherwise <c>false</c>.
         /// </returns>
         public bool Update(float elapsedTimeInMilliseconds = 0f, bool isReassignOverlap = false)
         {
@@ -362,13 +358,9 @@ namespace Timer
             {
                 InvokeTimerFiring();
                 if (isReassignOverlap)
-                {
-                    ValueInMillis = (float) newValue % (float) MaxValue;
-                }
+                    SetTo((float) newValue % (float) MaxValue);
                 else
-                {
                     Value = MinValue;
-                }
 
                 IsActive = false;
                 Next.IsActive = true;

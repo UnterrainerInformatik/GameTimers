@@ -17,7 +17,10 @@
       When programming a game you'll depend on timers heavily. Whether you have a damage effect, that needs to be calculated every x seconds, or a visual special effect to be controlled, you'll steer all that by adding time to variable and checking it against a limit. Like with every work that gets repetitive, you'll get sloppy and you'll make mistakes. And it's precisely for this reason that I wrote these classes.
       This is a PCL (portable code library) so you should be able to use it in any of your MG projects.
     </summary>
-    <releaseNotes>Added dependency to Fader project (nuget) instead of incorporating the code in-project.</releaseNotes>
+    <releaseNotes>
+      Added dependency to Fader project (nuget) instead of incorporating the code in-project.
+      Refactored builder-pattern (now it's really a builder pattern; not a fake one like before). So you might have to change your instantiations if you used the Builder(float) method before.
+    </releaseNotes>
     <copyright>Copyright 2017</copyright>
     <language>en-US</language>
     <tags>Timer GameTime GameTimers Timers Fader update-loop update trigger timed</tags>

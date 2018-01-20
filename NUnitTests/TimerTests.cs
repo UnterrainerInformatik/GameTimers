@@ -25,6 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
+using Microsoft.Xna.Framework;
 using NUnit.Framework;
 
 namespace NUnitTests
@@ -33,17 +35,19 @@ namespace NUnitTests
     [Category("Fader")]
     public class TimerTests
     {
-        private readonly Timer.Timer t = Timer.Timer.Builder(10).Build();
+        private const float EPSILON = float.Epsilon;
+        private Timer.Timer t;
 
         [Test]
         public void TriggeredTimerInvokesEventsCorrectlyAndInOrder()
         {
+            t = Timer.Timer.Builder(10).Build();
             var index = 1;
-            var updatingTriggered = -1;
-            var updatedTriggered = -1;
-            var firingTriggered = -1;
-            var firedTriggered = -1;
-            
+            var updatingTriggered = 0;
+            var updatedTriggered = 0;
+            var firingTriggered = 0;
+            var firedTriggered = 0;
+
             t.TimerUpdating += (sender, args) =>
             {
                 updatingTriggered = index;
@@ -56,7 +60,7 @@ namespace NUnitTests
             };
             t.TimerFiring += (sender, args) =>
             {
-                updatedTriggered = index;
+                firingTriggered = index;
                 index++;
             };
             t.TimerFired += (sender, args) =>
@@ -64,21 +68,126 @@ namespace NUnitTests
                 firedTriggered = index;
                 index++;
             };
-            t.TimerFiring += (sender, args) =>
-            {
-                firingTriggered = index;
-                index++;
-            };
 
             var isTriggered = t.Update(1000f);
 
             Assert.IsTrue(isTriggered);
-            Assert.AreEqual(updatingTriggered, 1);
-            Assert.AreEqual(firingTriggered, 2);
-            Assert.AreEqual(firedTriggered, 3);
-            Assert.AreEqual(updatedTriggered, 4);
+            Assert.AreEqual(1, updatingTriggered);
+            Assert.AreEqual(2, firingTriggered);
+            Assert.AreEqual(3, firedTriggered);
+            Assert.AreEqual(4, updatedTriggered);
         }
 
+        [Test]
+        public void NoOverlapIsWorkingAfterUpdating()
+        {
+            t = Timer.Timer.Builder(10).Build();
+            t.Update(30f);
+            Assert.AreEqual(0f, t.ValueInMillis, EPSILON);
+        }
+
+        [Test]
+        public void MultipleOverlapsIsWorkingAfterUpdating()
+        {
+            t = Timer.Timer.Builder(10).Build(); 
+            t.Update(34f, true);
+            Assert.AreEqual(4f, t.ValueInMillis, EPSILON);
+        }
+        
+        [Test]
+        public void InactiveTimerDoesntFire()
+        {
+            t = Timer.Timer.Builder(10).Active(false).Build();
+            t.Update(4f, true);
+            Assert.AreEqual(0f, t.ValueInMillis, EPSILON);
+        }
+
+        [Test]
+        public void IfTimeElapsedIsTooSmallOnlyUpdatingAndUpdatedAreTriggered()
+        {
+            t = Timer.Timer.Builder(10).Build();
+            var index = 1;
+            var updatingTriggered = 0;
+            var updatedTriggered = 0;
+            var firingTriggered = 0;
+            var firedTriggered = 0;
+
+            t.Updating((sender, args) =>
+            {
+                updatingTriggered = index;
+                index++;
+            });
+            t.Updated((sender, args) =>
+            {
+                updatedTriggered = index;
+                index++;
+            });
+            t.Firing((sender, args) =>
+            {
+                firingTriggered = index;
+                index++;
+            });
+            t.Fired((sender, args) =>
+            {
+                firedTriggered = index;
+                index++;
+            });
+
+            // Update 4ms by creating a GameTime object from scratch.
+            var isTriggered = t.Update(new GameTime(TimeSpan.FromMilliseconds(1004f), TimeSpan.FromMilliseconds(4f)));
+
+            Assert.AreEqual(6f, t.TimeLeftToGoUntilReset, EPSILON);
+            Assert.IsFalse(isTriggered);
+            Assert.AreEqual(1, updatingTriggered);
+            Assert.AreEqual(0, firingTriggered);
+            Assert.AreEqual(0, firedTriggered);
+            Assert.AreEqual(2, updatedTriggered);
+        }
+
+        [Test]
+        public void ResettingTriggersOnNextUpdateCycleEvenIfTimeIsZero()
+        {
+            t = Timer.Timer.Builder(10).Build();
+
+            var triggered = t.Update(4f);
+            Assert.IsFalse(triggered);
+            Assert.AreEqual(4f, t.ValueInMillis, EPSILON);
+
+            t.Set();
+
+            triggered = t.Update();
+            Assert.IsTrue(triggered);
+            Assert.AreEqual(0f, t.ValueInMillis, EPSILON);
+        }
+
+        [Test]
+        public void ResetDoesntEnablePreviouslyDisabledTimer()
+        {
+            t = Timer.Timer.Builder(10).Active(false).Build();
+            t.SetTo(2f);
+            t.Reset();
+            Assert.AreEqual(0f, t.ValueInMillis);
+            Assert.IsFalse(t.IsActive);
+        }
+
+        [Test]
+        public void ResetResetsTimerToZero()
+        {
+            t = Timer.Timer.Builder(10).Build();
+            t.Update(4f);
+            t.Reset();
+            Assert.AreEqual(0f, t.ValueInMillis);
+        }
+
+        [Test]
+        public void ResetToResetsTimerMaxToAValueAndTimerToZero()
+        {
+            t = Timer.Timer.Builder(10).Build();
+            t.Update(4f);
+            t.ResetTo(6f);
+            Assert.AreEqual(0f, t.ValueInMillis);
+            Assert.AreEqual(6f, t.MaxValue);
+        }
 
         /*
         [Test]
