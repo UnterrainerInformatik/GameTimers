@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace NUnitTests
 {
     [TestFixture]
-    [Category("Fader")]
+    [Category("Timer")]
     public class TimerTests
     {
         private const float EPSILON = float.Epsilon;
@@ -188,12 +188,5 @@ namespace NUnitTests
             Assert.AreEqual(0f, t.ValueInMillis);
             Assert.AreEqual(6f, t.MaxValue);
         }
-
-        /*
-        [Test]
-        public void Test()
-        {
-        }
-         */
     }
 }

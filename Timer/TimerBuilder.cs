@@ -40,7 +40,6 @@ namespace Timer
 
         private float value;
         private bool isActive = true;
-        private Timer next;
 
         public TimerBuilder(float intervalInMilliseconds)
         {
@@ -50,7 +49,6 @@ namespace Timer
         public Timer Build()
         {
             var t = new Timer(value);
-            t.Next = next ?? t;
             t.IsActive = isActive;
 
             CopyEvents(TimerFired, t);
@@ -69,16 +67,7 @@ namespace Timer
                 target.Fired((EventHandler<TimerArgs>) handler);
             }
         }
-
-        /// <summary>
-        ///     Sets the next timer that is chained after this one. If none is set, the new timer will reference itself with next.
-        /// </summary>
-        public TimerBuilder Next(Timer timer)
-        {
-            next = timer;
-            return this;
-        }
-
+        
         /// <summary>
         ///     Sets a value indicating whether the Timer is active.
         ///     When the Timer is inactive updates have no effect and triggers are not called.
@@ -86,6 +75,16 @@ namespace Timer
         public TimerBuilder Active(bool v)
         {
             isActive = v;
+            return this;
+        }
+
+        /// <summary>
+        ///     Sets a value indicating that this Timer is inactive.
+        ///     When the Timer is inactive updates have no effect and triggers are not called.
+        /// </summary>
+        public TimerBuilder InActive()
+        {
+            isActive = false;
             return this;
         }
 
